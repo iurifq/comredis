@@ -1,5 +1,7 @@
 :warning::warning: Project still in a very experimental phase :warning::warning:
 
+[![Build Status](https://travis-ci.org/iurifq/comredis.svg?branch=master)](https://travis-ci.org/iurifq/comredis)
+
 # Comredis
 
 Comredis is your comrade for Redis command generation in Elixir. It helps you generate correct commands with the right arity. You can then use your favorite client to push them to Redis.
