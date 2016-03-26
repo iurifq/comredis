@@ -20,6 +20,12 @@ defmodule ComredisTest do
     assert Comredis.brpop(~w(key1 key2), 0) == ["BRPOP", "key1", "key2", 0]
   end
 
+  @tag :pending
+  test "complex with optional agument commands" do
+    assert Comredis.zrevrangebylex("key", "max", "min", limit: ["offset", "count"]) == ~w(ZREVRANGEBYLEX key max min LIMIT offset count)
+    assert Comredis.zrevrangebylex("key", "max", "min") == ~w(ZREVRANGEBYLEX key max min)
+  end
+
   test "commands/0" do
     assert :del in Comredis.commands
     assert :set in Comredis.commands

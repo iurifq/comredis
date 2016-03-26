@@ -1,8 +1,26 @@
 defmodule Comredis.Command.Generator do
-  alias Comredis.Command
-  alias Comredis.Command.{FileReader, Generator}
+  alias Comredis.{Command, Command.Argument, Command.FileReader}
 
-  def doc(command) do
+  defmacro __using__(_options) do
+    commands = for command <- FileReader.load, do: generate(command)
+    quote do
+      Module.register_attribute __MODULE__, :commands, accumulate: true
+      unquote(commands)
+    end
+  end
+
+  defp generate(command = %Command{}) do
+    quote do
+      @commands unquote {
+        String.to_atom(command.canonical_name),
+        String.to_atom(command.group)
+      }
+      @doc unquote doc(command)
+      unquote bodies(command)
+    end
+  end
+
+  defp doc(command) do
     basic_doc = """
     #{command.summary}
 
@@ -16,28 +34,15 @@ defmodule Comredis.Command.Generator do
     end
   end
 
-  defmacro __using__(_options) do
-    commands = for command <- FileReader.load do
-      generate(command)
-    end
-    quote do
-      Module.register_attribute __MODULE__, :commands, accumulate: true
-      unquote(commands)
-    end
-  end
-
-  defp generate(command) do
+  def bodies(command) do
     args = command.arguments
-            |> Enum.map(&(&1.name || &1.command))
+            |> Enum.map(&(&1.canonical_command || &1.canonical_name))
             |> Enum.join(", ")
-    quote do
-      @commands unquote({command.function_name, command.group})
-      @doc unquote(doc(command))
-      unquote Code.string_to_quoted! """
-      def #{command.function_name}(#{args}) do
-        ["#{command.name}" | [#{args}]]
-      end
-      """
+
+    Code.string_to_quoted!("""
+    def #{command.canonical_name}(#{args}) do
+      ["#{command.name}" | [#{args}]]
     end
+    """)
   end
 end
