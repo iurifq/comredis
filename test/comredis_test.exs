@@ -13,4 +13,9 @@ defmodule ComredisTest do
     assert Comredis.setnx("key", "value") == ~w(SETNX key value)
     assert Comredis.cluster_count_failure_reports("node-id") == ["CLUSTER COUNT-FAILURE-REPORTS", "node-id"]
   end
+
+  test "commands with multiple arguments" do
+    assert Comredis.brpop("key", 0) == ["BRPOP", "key", 0]
+    assert Comredis.brpop(~w(key1 key2), 0) == ["BRPOP", "key1", "key2", 0]
+  end
 end
