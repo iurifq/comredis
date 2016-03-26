@@ -17,8 +17,12 @@ defmodule Comredis.Command.Generator do
   end
 
   defmacro __using__(_options) do
-    for command <- FileReader.load do
+    commands = for command <- FileReader.load do
       generate(command)
+    end
+    quote do
+      Module.register_attribute __MODULE__, :commands, accumulate: true
+      unquote(commands)
     end
   end
 
@@ -27,6 +31,7 @@ defmodule Comredis.Command.Generator do
             |> Enum.map(&(&1.name || &1.command))
             |> Enum.join(", ")
     quote do
+      @commands unquote({command.function_name, command.group})
       @doc unquote(doc(command))
       unquote Code.string_to_quoted! """
       def #{command.function_name}(#{args}) do

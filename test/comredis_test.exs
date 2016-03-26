@@ -18,4 +18,21 @@ defmodule ComredisTest do
     assert Comredis.brpop("key", 0) == ["BRPOP", "key", 0]
     assert Comredis.brpop(~w(key1 key2), 0) == ["BRPOP", "key1", "key2", 0]
   end
+
+  test "commands/0" do
+    assert :del in Comredis.commands
+    assert :set in Comredis.commands
+    assert :zscan in Comredis.commands
+  end
+
+  test "command_groups/0" do
+    assert :geo in Comredis.command_groups
+    assert :hash in Comredis.command_groups
+    assert :server in Comredis.command_groups
+  end
+
+  test "command_group/1" do
+    assert :lpop in Comredis.command_group(:list)
+    assert :hmget in Comredis.command_group(:hash)
+  end
 end
