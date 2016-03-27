@@ -25,7 +25,7 @@ defmodule Comredis.Command.FileReader do
   defp canonize("end"), do: "endpos"
   defp canonize([h | tail]), do: "#{canonize(h)}_#{canonize(tail)}" |> String.strip(?_)
   defp canonize(name) when is_binary(name) do
-    name |> String.downcase |> String.replace(~r/[ -:]+/, "_")
+    name |> String.downcase |> String.replace(~r/[ \-:\/]+/, "_")
   end
   defp canonize(other), do: other
 
