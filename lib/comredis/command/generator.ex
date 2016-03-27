@@ -49,7 +49,7 @@ defmodule Comredis.Command.Generator do
     quote do
       unquote Code.string_to_quoted!("""
       def #{command.canonical_name}(#{function_parameters |> List.flatten |> Enum.join(", ")}) do
-        List.flatten ["#{command.name}" | [#{command_parameters |> List.flatten |> Enum.join(", ")}]]
+        List.flatten [~w(#{command.name |> Enum.join(" ")}) | [#{command_parameters |> List.flatten |> Enum.join(", ")}]]
       end
       """)
 

@@ -3,15 +3,15 @@ defmodule ComredisTest do
   doctest Comredis
 
   test "commands without arguments" do
-    assert Comredis.quit == ["QUIT"]
-    assert Comredis.command == ["COMMAND"]
-    assert Comredis.client_list == ["CLIENT LIST"]
+    assert Comredis.quit == ~w(QUIT)
+    assert Comredis.command == ~w(COMMAND)
+    assert Comredis.client_list == ~w(CLIENT LIST)
   end
 
   test "comands without optional arguments" do
     assert Comredis.get("key") == ~w(GET key)
     assert Comredis.setnx("key", "value") == ~w(SETNX key value)
-    assert Comredis.cluster_count_failure_reports("node-id") == ["CLUSTER COUNT-FAILURE-REPORTS", "node-id"]
+    assert Comredis.cluster_count_failure_reports("node-id") == ~w(CLUSTER COUNT-FAILURE-REPORTS node-id)
   end
 
   test "commands with multiple arguments" do
@@ -23,9 +23,9 @@ defmodule ComredisTest do
 
   test "command with optional arguments" do
     assert Comredis.bitpos(~s(key), 0, start: 1, endpos: 10) == ["BITPOS", "key", 0, 1, 10]
-    assert Comredis.client_kill(ip_port: "ip:port", id: 1) == ["CLIENT KILL", "ip:port", "ID", 1]
-    assert Comredis.client_kill(addr: "ip:port", id: 1) == ["CLIENT KILL", "ID", 1, "ADDR", "ip:port"]
-    assert Comredis.client_kill(id: 1, addr: "ip:port") == ["CLIENT KILL", "ID", 1, "ADDR", "ip:port"]
+    assert Comredis.client_kill(ip_port: "ip:port", id: 1) == ["CLIENT", "KILL", "ip:port", "ID", 1]
+    assert Comredis.client_kill(addr: "ip:port", id: 1) == ["CLIENT", "KILL", "ID", 1, "ADDR", "ip:port"]
+    assert Comredis.client_kill(id: 1, addr: "ip:port") == ["CLIENT", "KILL", "ID", 1, "ADDR", "ip:port"]
   end
 
   test "complex with optional agument commands" do

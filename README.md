@@ -12,7 +12,7 @@ It parses the [Redis commands documentation](https://github.com/antirez/redis-do
 
 ```elixir
 Comredis.client_list
-#=> ["CLIENT LIST"]
+#=> ["CLIENT", "LIST"]
 
 Comredis.get("k")
 #=> ["GET", "k"]

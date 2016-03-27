@@ -8,7 +8,7 @@ defmodule Comredis.Command.FileReader do
 
   def load do
     for {name, raw_command} <- from_file do
-      command = to_struct(Command, Map.merge(raw_command, %{"name" => name}))
+      command = to_struct(Command, Map.merge(raw_command, %{"name" => String.split(name)}))
       arguments = for argument <- command.arguments || [] do
         to_struct(Argument, argument)
       end
