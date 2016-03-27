@@ -30,21 +30,16 @@ defmodule Comredis.Command.Generator do
   end
 
   defp doc(command) do
-    doc = """
-    #{command.summary}
-
-    *Group:* **#{command.group}**
-
-    *Available since Redis version **#{command.since}**.*
-    """
-    doc = case command.complexity do
-      nil -> doc
-      complexity -> "#{doc}\n*Time complexity:* #{complexity}"
-    end
-    case DocTest.tests(command.canonical_name) do
-       nil -> doc
-       tests -> "#{doc}\n\n## Examples\n\n#{tests}"
-    end
+    doc_parts = [
+      {command.summary, ":placeholder:"},
+      {command.group, "*Group:* **:placeholder:**"},
+      {command.since, "*Available since Redis version **:placeholder:**.*"},
+      {command.complexity, "*Time complexity:* :placeholder:"},
+      {DocTest.tests(command.canonical_name), "## Examples\n\n:placeholder:"},
+    ]
+    for {content, doc_part} <- doc_parts, content do
+      String.replace(doc_part, ":placeholder:", content)
+    end |> Enum.join("\n\n")
   end
 
   defp bodies(command) do
