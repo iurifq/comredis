@@ -17,6 +17,8 @@ defmodule ComredisTest do
   test "commands with multiple arguments" do
     assert Comredis.brpop("key", 0) == ["BRPOP", "key", 0]
     assert Comredis.brpop(~w(key1 key2), 0) == ["BRPOP", "key1", "key2", 0]
+    assert Comredis.hmset("h", ~w(k1 v1 k2 v2)) == ~w(HMSET h k1 v1 k2 v2)
+    assert Comredis.hmset("h", [~w(k1 v1), ~w(k2 v2)]) == ~w(HMSET h k1 v1 k2 v2)
   end
 
   test "command with optional arguments" do
@@ -26,7 +28,6 @@ defmodule ComredisTest do
     assert Comredis.client_kill(id: 1, addr: "ip:port") == ["CLIENT KILL", "ID", 1, "ADDR", "ip:port"]
   end
 
-  @tag :pending
   test "complex with optional agument commands" do
     assert Comredis.zrevrangebylex("key", "max", "min", limit: ["offset", "count"]) == ~w(ZREVRANGEBYLEX key max min LIMIT offset count)
     assert Comredis.zrevrangebylex("key", "max", "min") == ~w(ZREVRANGEBYLEX key max min)

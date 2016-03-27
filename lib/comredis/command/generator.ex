@@ -61,12 +61,12 @@ defmodule Comredis.Command.Generator do
 
         translated_options = for {argument_key, list} <- arguments_opts, is_list(list), Enum.count(list) == 2 do
           {argument_key, argument, value} = case list do
-            [{argument_key, argument}, {argument_key, value}] when argument |> is_list -> {argument_key, argument, value}
             [{argument_key, value}, {argument_key, argument}] when argument |> is_list -> {argument_key, argument, value}
+            [{argument_key, argument}, {argument_key, value}] when argument |> is_list -> {argument_key, argument, value}
           end
 
-          case Enum.into(argument, %{}) do
-            %{command: command} when is_binary(command) -> { argument_key, [command, value] }
+          case List.keyfind(argument, :command, 0) do
+            {:command, command} when is_binary(command) -> { argument_key, [command, value] }
             _ -> { argument_key, [value] }
           end
         end
