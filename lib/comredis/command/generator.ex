@@ -62,18 +62,20 @@ defmodule Comredis.Command.Generator do
     {required_args, optional_args} = Argument.split_options(command.arguments)
     args = required_args
             |> Enum.map(&(&1.canonical_command || &1.canonical_name))
+            |> inspect
+            |> String.replace(~r/[\[\]"]/, "")
     {function_parameters, command_parameters} = case optional_args do
       [] -> {args, args}
       _ -> {
-        args ++ ["opts \\\\ []"],
-        args ++ ["translate_options(~s(#{command.canonical_name}), opts)"]
+        "#{args}, opts \\\\ []" |> String.lstrip(?,),
+        "#{args}, translate_options(~s(#{command.canonical_name}), opts)" |> String.lstrip(?,),
       }
     end
 
     quote do
       unquote Code.string_to_quoted!("""
-      def #{command.canonical_name}(#{function_parameters |> List.flatten |> Enum.join(", ")}) do
-        List.flatten [~w(#{command.name |> Enum.join(" ")}) | [#{command_parameters |> List.flatten |> Enum.join(", ")}]]
+      def #{command.canonical_name}(#{function_parameters}) do
+        List.flatten [#{inspect command.name}, #{command_parameters}]
       end
       """)
 
