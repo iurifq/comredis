@@ -14,11 +14,18 @@ It parses the [Redis commands documentation](https://github.com/antirez/redis-do
 Comredis.client_list
 #=> ["CLIENT LIST"]
 
-Comredis.get("key")
-#=> ["GET", "key"]
+Comredis.get("k")
+#=> ["GET", "k"]
 
-Comredis.setnx("key", "value")
-#=> ["SETNX", "key", "value"]
+Comredis.mget(["k1", "k2"])
+#=> ["MGET", "k1", "k2"]
+
+Comredis.set("k", "v")
+#=> ["SET", "k", "v"]
+
+# Using SET with expire time. It allows only the options the command accepts
+Comredis.set("k", "v", ex: 10)
+#=> ["SET", "k", "v", "EX", 10]
 ```
 
 You also get nice documentation for each command directly from the Redis' documentation.
