@@ -14,10 +14,16 @@ defmodule ComredisTest do
     assert Comredis.cluster_count_failure_reports("node-id") == ["CLUSTER COUNT-FAILURE-REPORTS", "node-id"]
   end
 
-  @tag :pending
   test "commands with multiple arguments" do
     assert Comredis.brpop("key", 0) == ["BRPOP", "key", 0]
     assert Comredis.brpop(~w(key1 key2), 0) == ["BRPOP", "key1", "key2", 0]
+  end
+
+  test "command with optional arguments" do
+    assert Comredis.bitpos(~s(key), 0, start: 1, endpos: 10) == ["BITPOS", "key", 0, 1, 10]
+    assert Comredis.client_kill(ip_port: "ip:port", id: 1) == ["CLIENT KILL", "ip:port", "ID", 1]
+    assert Comredis.client_kill(addr: "ip:port", id: 1) == ["CLIENT KILL", "ID", 1, "ADDR", "ip:port"]
+    assert Comredis.client_kill(id: 1, addr: "ip:port") == ["CLIENT KILL", "ID", 1, "ADDR", "ip:port"]
   end
 
   @tag :pending
