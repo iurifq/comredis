@@ -14,7 +14,7 @@ defmodule Comredis.Command.Argument do
   * `:command` - command that must preceed the argument
   * `:canonical_command` - string representation of the command
   """
-  defstruct name: nil, canonical_name: nil, type: nil, optional: false, multiple: false, enum: [], variadic: false, command: nil, canonical_command: nil
+  defstruct name: nil, canonical_name: nil, type: nil, optional: false, multiple: false, enum: nil, variadic: false, command: nil, canonical_command: nil
 
   @doc """
   Function to split the arguments that are optional or commands from the required ones.

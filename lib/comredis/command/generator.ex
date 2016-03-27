@@ -35,10 +35,26 @@ defmodule Comredis.Command.Generator do
       {command.group, "*Group:* **:placeholder:**"},
       {command.since, "*Available since Redis version **:placeholder:**.*"},
       {command.complexity, "*Time complexity:* :placeholder:"},
+      {arguments_doc(command.arguments), "*Arguments:*\n\n:placeholder:"},
       {DocTest.tests(command.canonical_name), "## Examples\n\n:placeholder:"},
     ]
     for {content, doc_part} <- doc_parts, content do
       String.replace(doc_part, ":placeholder:", content)
+    end |> Enum.join("\n\n")
+  end
+
+  defp arguments_doc([]), do: nil
+  defp arguments_doc(arguments) do
+    for argument <- arguments do
+      [
+        "* `#{argument.canonical_command || argument.canonical_name}`",
+        [
+          argument.optional && "optional",
+          argument.multiple && "multiple",
+          argument.type && inspect(argument.type) |> String.replace(~w("), ""),
+          argument.enum && inspect(argument.enum),
+        ] |> Enum.filter(&(&1)) |> Enum.join(", ")
+      ] |> Enum.join(" ")
     end |> Enum.join("\n\n")
   end
 
