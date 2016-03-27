@@ -28,7 +28,8 @@ Comredis.set("k", "v", ex: 10)
 #=> ["SET", "k", "v", "EX", 10]
 ```
 
-You also get nice documentation for each command directly from the Redis' documentation.
+You also get nice [documentation](https://hexdocs.pm/comredis/Comredis.html) for each command directly from the Redis' documentation.
+You can even check it out right off your IEx session.
 
 ```
 h Comredis.get
@@ -43,3 +44,9 @@ h Comredis.get
 > *Available since Redis version 1.0.0.*
 
 > *Time complexity:* O(1)
+
+## TODO
+
+* [ ] Test against several clients
+* [ ] Increase the amount of examples for the generated functions with doctests
+* [ ] Property based testing to guarantee it will not crash the application

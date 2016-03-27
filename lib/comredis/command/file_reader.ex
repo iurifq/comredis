@@ -6,6 +6,12 @@ defmodule Comredis.Command.FileReader do
 
   @derive [Poison.Encoder]
 
+  @doc """
+  Function that loads the whole command json file
+
+  It reads the file and generates structs of `Command` with their arguments
+  as `Argument` structs.
+  """
   def load do
     for {name, raw_command} <- from_file do
       command = to_struct(Command, Map.merge(raw_command, %{"name" => String.split(name)}))

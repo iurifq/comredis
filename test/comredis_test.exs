@@ -2,12 +2,6 @@ defmodule ComredisTest do
   use ExUnit.Case, async: true
   doctest Comredis
 
-  test "commands without arguments" do
-    assert Comredis.quit == ~w(QUIT)
-    assert Comredis.command == ~w(COMMAND)
-    assert Comredis.client_list == ~w(CLIENT LIST)
-  end
-
   test "comands without optional arguments" do
     assert Comredis.get("key") == ~w(GET key)
     assert Comredis.setnx("key", "value") == ~w(SETNX key value)

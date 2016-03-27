@@ -1,4 +1,13 @@
 defmodule Comredis do
+  @moduledoc """
+  Entry point module of the library with all Redis commands functions.
+
+  The functions defined here are loaded in compile time from the
+  [Redis commands documentation](https://github.com/antirez/redis-doc/blob/master/commands.json)
+  The only exceptions are `commands/0`, `command_group/1` and `command_groups/0`
+  that provide a way to look for the desired commands.
+  **Because you don't need to remember all of them by heart**
+  """
   use Comredis.Command.Generator
 
   @doc """
@@ -11,7 +20,7 @@ defmodule Comredis do
   end
 
   @doc """
-  Returns the commands in the command group `group`.
+  Returns the commands in the given command group.
   """
   @spec command_group(atom()) :: list(atom())
   def command_group(group) when is_atom(group) do
@@ -21,7 +30,7 @@ defmodule Comredis do
   end
 
   @doc """
-  Return the names of the command groups.
+  Returns the names of the command groups provided by Redis.
   """
   @spec command_groups() :: list(atom())
   def command_groups do

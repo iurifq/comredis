@@ -1,6 +1,15 @@
 defmodule Comredis.Command.Generator do
-  alias Comredis.{Command, Command.Argument, Command.FileReader}
+  @moduledoc """
+  Module responsible for generating at compile-time a function for each Redis command.
+  """
 
+  alias Comredis.{Command, Command.Argument, Command.DocTest, Command.FileReader}
+
+  @doc """
+  Macro that defines functions when this module is used.
+
+  A function for each command is defined in the module that executes `use Comredis.Command.Generator`
+  """
   defmacro __using__(_options) do
     commands = for command <- FileReader.load, do: generate(command)
     quote do
@@ -21,16 +30,20 @@ defmodule Comredis.Command.Generator do
   end
 
   defp doc(command) do
-    basic_doc = """
+    doc = """
     #{command.summary}
 
-    *Group:* #{command.group}
+    *Group:* **#{command.group}**
 
-    *Available since Redis version #{command.since}.*
+    *Available since Redis version **#{command.since}**.*
     """
-    case command.complexity do
-      nil -> basic_doc
-      complexity -> "#{basic_doc}\n*Time complexity:* #{complexity}"
+    doc = case command.complexity do
+      nil -> doc
+      complexity -> "#{doc}\n*Time complexity:* #{complexity}"
+    end
+    case DocTest.tests(command.canonical_name) do
+       nil -> doc
+       tests -> "#{doc}\n\n## Examples\n\n#{tests}"
     end
   end
 
