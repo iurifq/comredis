@@ -18,13 +18,16 @@ defmodule ComredisTest do
   test "command with optional arguments" do
     assert Comredis.bitpos(~s(key), 0, start: 1, endpos: 10) == ["BITPOS", "key", 0, 1, 10]
     assert Comredis.client_kill(ip_port: "ip:port", id: 1) == ["CLIENT", "KILL", "ip:port", "ID", 1]
+  end
+
+  test "options order doesn't affect generated command" do
     assert Comredis.client_kill(addr: "ip:port", id: 1) == ["CLIENT", "KILL", "ID", 1, "ADDR", "ip:port"]
     assert Comredis.client_kill(id: 1, addr: "ip:port") == ["CLIENT", "KILL", "ID", 1, "ADDR", "ip:port"]
   end
 
-  test "complex with optional agument commands" do
-    assert Comredis.zrevrangebylex("key", "max", "min", limit: ["offset", "count"]) == ~w(ZREVRANGEBYLEX key max min LIMIT offset count)
+  test "command with optional argument commands" do
     assert Comredis.zrevrangebylex("key", "max", "min") == ~w(ZREVRANGEBYLEX key max min)
+    assert Comredis.zrevrangebylex("key", "max", "min", limit: ["offset", "count"]) == ~w(ZREVRANGEBYLEX key max min LIMIT offset count)
   end
 
   test "commands/0" do
