@@ -8,6 +8,18 @@ Comredis is your comrade for Redis command generation in Elixir. It helps you ge
 
 It parses the [Redis commands documentation](https://github.com/antirez/redis-doc/blob/master/commands.json) and generates functions in compile-time. All functions are defined in the `Comredis` module.
 
+## Installation
+
+Add the `:comredis` dependency to your `mix.exs` file:
+
+```elixir
+defp dependencies do
+  [{:comredis, ">= 0.0.0"}]
+end
+```
+
+Then run `$ mix deps.get` to install it.
+
 ## Examples
 
 ```elixir
