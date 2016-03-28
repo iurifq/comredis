@@ -45,6 +45,9 @@ h Comredis.get
 
 > *Time complexity:* O(1)
 
+> Arguments:
+
+  * `key`
 ## TODO
 
 * [X] Tested against clients(Redix and Exredis)

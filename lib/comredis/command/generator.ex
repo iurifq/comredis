@@ -51,7 +51,7 @@ defmodule Comredis.Command.Generator do
         [
           argument.optional && "optional",
           argument.multiple && "multiple",
-          argument.type && inspect(argument.type) |> String.replace(~w("), ""),
+          argument.type && (argument.type != argument.name) && inspect(argument.type) |> String.replace(~w("), ""),
           argument.enum && inspect(argument.enum),
         ] |> Enum.filter(&(&1)) |> Enum.join(", ")
       ] |> Enum.join(" ")
