@@ -49,4 +49,4 @@ h Comredis.get
 
 * [X] Tested against clients(Redix and Exredis)
 * [ ] Increase the amount of examples for the generated functions with doctests
-* [ ] Property based testing to guarantee it will not crash the application
+* [X] Property based testing to guarantee it will not crash the application

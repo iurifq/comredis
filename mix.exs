@@ -30,6 +30,8 @@ defmodule Comredis.Mixfile do
 
       {:redix, ">= 0.0.0", only: :test},
       {:exredis, ">= 0.0.0", only: :test},
+      {:excheck, "~> 0.3", only: :test},
+      {:triq, github: "krestenkrab/triq", only: :test},
     ]
   end
 

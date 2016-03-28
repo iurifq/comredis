@@ -2,6 +2,8 @@
   "earmark": {:hex, :earmark, "0.2.1"},
   "eredis": {:hex, :eredis, "1.0.8"},
   "ex_doc": {:hex, :ex_doc, "0.11.4"},
+  "excheck": {:hex, :excheck, "0.3.3"},
   "exredis": {:hex, :exredis, "0.2.3"},
   "poison": {:hex, :poison, "2.1.0"},
-  "redix": {:hex, :redix, "0.3.6"}}
+  "redix": {:hex, :redix, "0.3.6"},
+  "triq": {:git, "https://github.com/krestenkrab/triq.git", "c7306b8eaea133d52140cb828817efb5e50a3d52", []}}
