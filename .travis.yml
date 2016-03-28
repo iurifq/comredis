@@ -11,3 +11,5 @@ elixir:
 sudo: false
 script:
   - mix test
+services:
+  - redis-server
