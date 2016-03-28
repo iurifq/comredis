@@ -29,6 +29,7 @@ defmodule Comredis.Mixfile do
       {:ex_doc, "~> 0.11", only: :dev},
 
       {:redix, ">= 0.0.0", only: :test},
+      {:exredis, ">= 0.0.0", only: :test},
     ]
   end
 
