@@ -1,5 +1,3 @@
-:warning::warning: Project still in a very experimental phase :warning::warning:
-
 [![Build Status](https://travis-ci.org/iurifq/comredis.svg?branch=master)](https://travis-ci.org/iurifq/comredis)
 
 # Comredis
