@@ -7,11 +7,17 @@ defmodule CorrectnessTest do
   @commands Comredis.Command.FileReader.load
 
   # Problematic commands
-  # [multi, quit, exec, discard, watch]: breaks the tests as we are running
+  # [MULTI, QUIT, EXEC, DISCARD, WATCH]: breaks the tests as we are running
   # them in a transaction;
-  # hstrlen: is available just in the 3.2.0 version of redis;
-  # spop: has a new option just available in 3.2.0;
-  @blacklist ~w(multi quit exec discard watch hstrlen spop)
+  # HSTRLEN: is available just in the 3.2.0 version of redis;
+  # SPOP: has a new option just available in 3.2.0;
+  # cluster commands on travis;
+  # MIGRATE and RESTORE have more arguments from 3.0, but Travis runs an older Redis;
+  @blacklist (if System.get_env("TRAVIS") do
+    ~w(cluster_addslots cluster_count_failure_reports cluster_countkeysinslot cluster_delslots cluster_failover cluster_forget cluster_getkeysinslot cluster_info cluster_keyslot cluster_meet cluster_nodes cluster_replicate cluster_reset cluster_saveconfig cluster_set_config_epoch cluster_setslot cluster_slaves cluster_slots discard exec hstrlen migrate multi quit readonly readwrite restore spop wait watch)
+  else
+    ~w(discard exec hstrlen multi quit spop watch)
+  end)
 
   setup do
     {:ok, conn} = Redix.start_link
