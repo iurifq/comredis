@@ -12,6 +12,7 @@ defmodule Comredis.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      name: "Comredis",
+     source_url: "https://github.com/iurifq/comredis",
      description: @description,
      package: package,
      deps: deps]
