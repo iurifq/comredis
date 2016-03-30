@@ -35,7 +35,7 @@ defmodule Comredis.Command.FileReader do
       case Map.fetch(attrs, Atom.to_string(k)) do
         {:ok, v} ->
           case { Map.fetch(struct, k), Map.fetch(struct, canonical = :"canonical_#{k}") } do
-            {_, {:ok, _}} -> %{acc | k => v, canonical => canonize(v) }
+            {_, {:ok, _}} -> %{acc | k => v, canonical => String.to_atom(canonize(v)) }
             {{:ok, _}, _}-> %{acc | k => v}
             _ -> acc
           end

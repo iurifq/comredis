@@ -14,9 +14,9 @@ defmodule CorrectnessTest do
   # cluster commands on travis;
   # MIGRATE and RESTORE have more arguments from 3.0, but Travis runs an older Redis;
   @blacklist (if System.get_env("TRAVIS") do
-    ~w(cluster_addslots cluster_count_failure_reports cluster_countkeysinslot cluster_delslots cluster_failover cluster_forget cluster_getkeysinslot cluster_info cluster_keyslot cluster_meet cluster_nodes cluster_replicate cluster_reset cluster_saveconfig cluster_set_config_epoch cluster_setslot cluster_slaves cluster_slots discard exec hstrlen migrate multi quit readonly readwrite restore spop wait watch)
+    ~w(cluster_addslots cluster_count_failure_reports cluster_countkeysinslot cluster_delslots cluster_failover cluster_forget cluster_getkeysinslot cluster_info cluster_keyslot cluster_meet cluster_nodes cluster_replicate cluster_reset cluster_saveconfig cluster_set_config_epoch cluster_setslot cluster_slaves cluster_slots discard exec hstrlen migrate multi quit readonly readwrite restore spop wait watch)a
   else
-    ~w(discard exec hstrlen multi quit spop watch)
+    ~w(discard exec hstrlen multi quit spop watch)a
   end)
 
   setup do
@@ -43,15 +43,15 @@ defmodule CorrectnessTest do
     {required, optional} = Enum.reduce command.arguments, {[], []}, fn(argument = %Argument{optional: optional, multiple: multiple, command: command}, {reqs, opts}) ->
       value = generate_argument(argument)
       cond do
-        optional || command -> {reqs, opts ++ [{String.to_atom(argument.canonical_command || argument.canonical_name), value}]}
+        optional || command -> {reqs, opts ++ [{argument.canonical_command || argument.canonical_name, value}]}
         true -> {reqs ++ [value], opts}
       end
     end
 
     if optional != [] do
-      apply(Comredis, String.to_atom(command.canonical_name), required ++ [optional])
+      apply(Comredis, command.canonical_name, required ++ [optional])
     else
-      apply(Comredis, String.to_atom(command.canonical_name), required)
+      apply(Comredis, command.canonical_name, required)
     end
   end
 

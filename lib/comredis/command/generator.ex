@@ -21,7 +21,7 @@ defmodule Comredis.Command.Generator do
   defp generate(command = %Command{}) do
     quote do
       @commands unquote {
-        String.to_atom(command.canonical_name),
+        command.canonical_name,
         String.to_atom(command.group)
       }
       @doc unquote doc(command)
@@ -61,7 +61,7 @@ defmodule Comredis.Command.Generator do
   defp bodies(command) do
     {required_args, optional_args} = Argument.split_options(command.arguments)
     args = required_args |> Enum.map(fn argument -> {
-      String.to_atom(argument.canonical_command || argument.canonical_name),
+      argument.canonical_command || argument.canonical_name,
       [],
       Elixir}
     end)
@@ -69,18 +69,18 @@ defmodule Comredis.Command.Generator do
 
     quote do
       if unquote(has_options) do
-        def unquote(String.to_atom(command.canonical_name))(unquote_splicing(args), opts \\ []) do
+        def unquote(command.canonical_name)(unquote_splicing(args), opts \\ []) do
           List.flatten [unquote(command.name), unquote_splicing(args) | translate_options(unquote(command.canonical_name), opts)]
         end
       else
-        def unquote(String.to_atom(command.canonical_name))(unquote_splicing(args)) do
+        def unquote(command.canonical_name)(unquote_splicing(args)) do
           List.flatten [unquote(command.name), unquote_splicing(args)]
         end
       end
 
       defp translate_options(command_name = unquote(command.canonical_name), opts) do
         arguments = unquote(command.arguments
-                    |> Enum.map(fn command -> {String.to_atom(command.canonical_command || command.canonical_name), Map.to_list(command) } end))
+                    |> Enum.map(fn command -> {command.canonical_command || command.canonical_name, Map.to_list(command) } end))
 
         arguments_opts = Enum.group_by(arguments ++ opts, fn {k, _} -> k end)
 
