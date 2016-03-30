@@ -33,7 +33,7 @@ defmodule Comredis.Command.Generator do
     doc_parts = [
       {command.summary, ":placeholder:"},
       {command.group, "*Group:* **:placeholder:**"},
-      {command.since, "*Available since Redis version **:placeholder:**.*"},
+      {command.since, "*Available since version* **:placeholder:**."},
       {command.complexity, "*Time complexity:* :placeholder:"},
       {arguments_doc(command.arguments), "*Arguments:*\n\n:placeholder:"},
       {DocTest.tests(command.canonical_name), "## Examples\n\n:placeholder:"},
@@ -60,24 +60,23 @@ defmodule Comredis.Command.Generator do
 
   defp bodies(command) do
     {required_args, optional_args} = Argument.split_options(command.arguments)
-    args = required_args
-            |> Enum.map(&(&1.canonical_command || &1.canonical_name))
-            |> inspect
-            |> String.replace(~r/[\[\]"]/, "")
-    {function_parameters, command_parameters} = case optional_args do
-      [] -> {args, args}
-      _ -> {
-        "#{args}, opts \\\\ []" |> String.lstrip(?,),
-        "#{args}, translate_options(~s(#{command.canonical_name}), opts)" |> String.lstrip(?,),
-      }
-    end
+    args = required_args |> Enum.map(fn argument -> {
+      String.to_atom(argument.canonical_command || argument.canonical_name),
+      [],
+      Elixir}
+    end)
+    has_options = (optional_args != [])
 
     quote do
-      unquote Code.string_to_quoted!("""
-      def #{command.canonical_name}(#{function_parameters}) do
-        List.flatten [#{inspect command.name}, #{command_parameters}]
+      if unquote(has_options) do
+        def unquote(String.to_atom(command.canonical_name))(unquote_splicing(args), opts \\ []) do
+          List.flatten [unquote(command.name), unquote_splicing(args) | translate_options(unquote(command.canonical_name), opts)]
+        end
+      else
+        def unquote(String.to_atom(command.canonical_name))(unquote_splicing(args)) do
+          List.flatten [unquote(command.name), unquote_splicing(args)]
+        end
       end
-      """)
 
       defp translate_options(command_name = unquote(command.canonical_name), opts) do
         arguments = unquote(command.arguments
