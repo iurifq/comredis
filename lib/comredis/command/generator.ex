@@ -25,7 +25,7 @@ defmodule Comredis.Command.Generator do
         String.to_atom(command.group)
       }
       @doc unquote doc(command)
-      unquote bodies(command)
+      unquote bodies(command, Argument.split_options(command.arguments))
     end
   end
 
@@ -58,25 +58,24 @@ defmodule Comredis.Command.Generator do
     end |> Enum.join("\n\n")
   end
 
-  defp bodies(command) do
-    {required_args, optional_args} = Argument.split_options(command.arguments)
-    args = required_args |> Enum.map(fn argument -> { argument.canonical_name, [], Elixir} end)
-    has_options = (optional_args != [])
-
+  defp bodies(command, {required_args, []}) do
+    args = argument_names(required_args)
     quote do
-      if unquote(has_options) do
-        def unquote(command.canonical_name)(unquote_splicing(args), opts \\ []) do
-          List.flatten [unquote(command.name), unquote_splicing(args) | translate_options(unquote(command.canonical_name), opts)]
-        end
-      else
-        def unquote(command.canonical_name)(unquote_splicing(args)) do
-          List.flatten [unquote(command.name), unquote_splicing(args)]
-        end
+      def unquote(command.canonical_name)(unquote_splicing(args)) do
+        List.flatten [unquote(command.name), unquote_splicing(args)]
+      end
+    end
+  end
+
+  defp bodies(command, {required_args, optional_args}) do
+    args = argument_names(required_args)
+    quote do
+      def unquote(command.canonical_name)(unquote_splicing(args), opts \\ []) do
+        List.flatten [unquote(command.name), unquote_splicing(args) | translate_options(unquote(command.canonical_name), opts)]
       end
 
       defp translate_options(command_name = unquote(command.canonical_name), opts) do
-        arguments = unquote(command.arguments
-                    |> Enum.map(fn command -> {command.canonical_name, Map.to_list(command) } end))
+        arguments = unquote(for argument <- optional_args, do: {argument.canonical_name, Map.to_list(argument) })
 
         arguments_opts = Enum.group_by(arguments ++ opts, fn {k, _} -> k end)
 
@@ -98,5 +97,9 @@ defmodule Comredis.Command.Generator do
         end
       end
     end
+  end
+
+  defp argument_names(arguments) do
+    for argument <- arguments, do: { argument.canonical_name, [], Elixir}
   end
 end
