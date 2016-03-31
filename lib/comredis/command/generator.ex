@@ -77,23 +77,11 @@ defmodule Comredis.Command.Generator do
       defp translate_options(command_name = unquote(command.canonical_name), opts) do
         arguments = unquote(for argument <- optional_args, do: {argument.canonical_name, Map.to_list(argument) })
 
-        arguments_opts = Enum.group_by(arguments ++ opts, fn {k, _} -> k end)
-
-        translated_options = for {argument_key, list} <- arguments_opts, is_list(list), Enum.count(list) == 2 do
-          {argument_key, argument, value} = case list do
-            [{argument_key, value}, {argument_key, argument}] when argument |> is_list -> {argument_key, argument, value}
-            [{argument_key, argument}, {argument_key, value}] when argument |> is_list -> {argument_key, argument, value}
+        for {canonical_name, argument} <- arguments, value = Keyword.get(opts, canonical_name) do
+          case Keyword.fetch(argument, :command) do
+            {:ok, command} when is_binary(command) -> [command, value]
+            _ -> value
           end
-
-          case List.keyfind(argument, :command, 0) do
-            {:command, command} when is_binary(command) -> { argument_key, [command, value] }
-            _ -> { argument_key, [value] }
-          end
-        end
-
-        Enum.filter_map arguments, fn {key, _} -> List.keymember?(translated_options, key, 0) end, fn {key, _} ->
-          {_, value} = List.keyfind(translated_options, key, 0)
-          value
         end
       end
     end

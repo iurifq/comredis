@@ -42,14 +42,15 @@ defmodule CorrectnessTest do
     command = Enum.find @commands, fn %Command{name: name} -> name == command_name end
     {required, optional} = Enum.reduce command.arguments, {[], []}, fn(argument = %Argument{optional: optional, multiple: multiple, command: command}, {reqs, opts}) ->
       value = generate_argument(argument)
-      cond do
-        optional || command -> {reqs, opts ++ [{argument.canonical_name, value}]}
-        true -> {reqs ++ [value], opts}
+      if optional || command do
+        {reqs, opts ++ [{argument.canonical_name, value}]}
+      else
+        {reqs ++ [value], opts}
       end
     end
 
     if optional != [] do
-      apply(Comredis, command.canonical_name, required ++ [optional])
+      apply(Comredis, command.canonical_name, required ++ Enum.shuffle [optional])
     else
       apply(Comredis, command.canonical_name, required)
     end
