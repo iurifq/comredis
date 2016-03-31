@@ -4,8 +4,6 @@ defmodule Comredis.Command.FileReader do
 
   @command_file "commands.json"
 
-  @derive [Poison.Encoder]
-
   @doc """
   Function that loads the whole command json file
 
