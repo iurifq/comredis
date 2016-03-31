@@ -16,16 +16,16 @@ defmodule Comredis.Command.FileReader do
     for {name, raw_command} <- from_file do
       command = to_struct(Command, Map.merge(raw_command, %{"name" => String.split(name)}))
       arguments = for argument <- command.arguments || [] do
-        to_struct(Argument, argument)
+        argument_struct = to_struct(Argument, argument)
+        %{argument_struct | canonical_name: canonize(argument_struct.command) || argument_struct.canonical_name}
       end
       Map.merge command, %{arguments: arguments}
     end
   end
 
-  defp canonize("end"), do: "endpos"
-  defp canonize([h | tail]), do: "#{canonize(h)}_#{canonize(tail)}" |> String.strip(?_)
+  defp canonize([h | tail]), do: "#{canonize(h)}_#{canonize(tail)}" |> String.strip(?_) |> String.to_atom
   defp canonize(name) when is_binary(name) do
-    name |> String.downcase |> String.replace(~r/[ \-:\/]+/, "_")
+    name |> String.downcase |> String.replace(~r/[ \-:\/]+/, "_") |> String.to_atom
   end
   defp canonize(other), do: other
 
@@ -35,7 +35,7 @@ defmodule Comredis.Command.FileReader do
       case Map.fetch(attrs, Atom.to_string(k)) do
         {:ok, v} ->
           case { Map.fetch(struct, k), Map.fetch(struct, canonical = :"canonical_#{k}") } do
-            {_, {:ok, _}} -> %{acc | k => v, canonical => String.to_atom(canonize(v)) }
+            {_, {:ok, _}} -> %{acc | k => v, canonical => canonize(v) }
             {{:ok, _}, _}-> %{acc | k => v}
             _ -> acc
           end

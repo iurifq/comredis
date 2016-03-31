@@ -47,7 +47,7 @@ defmodule Comredis.Command.Generator do
   defp arguments_doc(arguments) do
     for argument <- arguments do
       [
-        "* `#{argument.canonical_command || argument.canonical_name}`",
+        "* `#{argument.canonical_name}`",
         [
           argument.optional && "optional",
           argument.multiple && "multiple",
@@ -60,11 +60,7 @@ defmodule Comredis.Command.Generator do
 
   defp bodies(command) do
     {required_args, optional_args} = Argument.split_options(command.arguments)
-    args = required_args |> Enum.map(fn argument -> {
-      argument.canonical_command || argument.canonical_name,
-      [],
-      Elixir}
-    end)
+    args = required_args |> Enum.map(fn argument -> { argument.canonical_name, [], Elixir} end)
     has_options = (optional_args != [])
 
     quote do
@@ -80,7 +76,7 @@ defmodule Comredis.Command.Generator do
 
       defp translate_options(command_name = unquote(command.canonical_name), opts) do
         arguments = unquote(command.arguments
-                    |> Enum.map(fn command -> {command.canonical_command || command.canonical_name, Map.to_list(command) } end))
+                    |> Enum.map(fn command -> {command.canonical_name, Map.to_list(command) } end))
 
         arguments_opts = Enum.group_by(arguments ++ opts, fn {k, _} -> k end)
 

@@ -43,7 +43,7 @@ defmodule CorrectnessTest do
     {required, optional} = Enum.reduce command.arguments, {[], []}, fn(argument = %Argument{optional: optional, multiple: multiple, command: command}, {reqs, opts}) ->
       value = generate_argument(argument)
       cond do
-        optional || command -> {reqs, opts ++ [{argument.canonical_command || argument.canonical_name, value}]}
+        optional || command -> {reqs, opts ++ [{argument.canonical_name, value}]}
         true -> {reqs ++ [value], opts}
       end
     end

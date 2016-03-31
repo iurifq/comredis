@@ -16,7 +16,7 @@ defmodule ComredisTest do
   end
 
   test "command with optional arguments" do
-    assert Comredis.bitpos(~s(key), 0, start: 1, endpos: 10) == ["BITPOS", "key", 0, 1, 10]
+    assert Comredis.bitpos(~s(key), 0, start: 1, end: 10) == ["BITPOS", "key", 0, 1, 10]
     assert Comredis.client_kill(ip_port: "ip:port", id: 1) == ["CLIENT", "KILL", "ip:port", "ID", 1]
   end
 
