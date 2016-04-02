@@ -1,5 +1,5 @@
 defmodule CorrectnessTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
   use ExCheck
   import Comredis
   alias Comredis.{Command, Command.Argument}
@@ -40,7 +40,7 @@ defmodule CorrectnessTest do
 
   defp generate_command(command_name) do
     command = Enum.find @commands, fn %Command{name: name} -> name == command_name end
-    {required, optional} = Enum.reduce command.arguments, {[], []}, fn(argument = %Argument{optional: optional, multiple: multiple, command: command}, {reqs, opts}) ->
+    {required, optional} = Enum.reduce command.arguments, {[], []}, fn(argument = %Argument{optional: optional, multiple: _multiple, command: command}, {reqs, opts}) ->
       value = generate_argument(argument)
       if optional || command do
         {reqs, opts ++ [{argument.canonical_name, value}]}
