@@ -2,7 +2,7 @@ defmodule Comredis.Command.FileReader do
   alias Comredis.Command
   alias Comredis.Command.Argument
 
-  @command_file "commands.json"
+  @command_file "priv/commands.json"
 
   @doc """
   Function that loads the whole command json file
