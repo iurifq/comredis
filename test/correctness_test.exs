@@ -14,7 +14,7 @@ defmodule CorrectnessTest do
   # cluster commands on travis;
   # MIGRATE and RESTORE have more arguments from 3.0, but Travis runs an older Redis;
   @blacklist (if System.get_env("TRAVIS") do
-    ~w(cluster_addslots cluster_count_failure_reports cluster_countkeysinslot cluster_delslots cluster_failover cluster_forget cluster_getkeysinslot cluster_info cluster_keyslot cluster_meet cluster_nodes cluster_replicate cluster_reset cluster_saveconfig cluster_set_config_epoch cluster_setslot cluster_slaves cluster_slots discard exec hstrlen migrate multi quit readonly readwrite restore spop wait watch)a
+    ~w(bitfield cluster_addslots cluster_count_failure_reports cluster_countkeysinslot cluster_delslots cluster_failover cluster_forget cluster_getkeysinslot cluster_info cluster_keyslot cluster_meet cluster_nodes cluster_replicate cluster_reset cluster_saveconfig cluster_set_config_epoch cluster_setslot cluster_slaves cluster_slots discard exec geoadd geodist geohash geopos georadius georadiusbymember hstrlen migrate multi quit readonly readwrite restore spop wait watch)a
   else
     ~w(discard exec hstrlen multi quit spop watch)a
   end)
